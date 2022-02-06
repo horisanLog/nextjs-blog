@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import Layout from "../components/Layout";
+import { Layout } from "../components/Layout";
 import Link from "next/link";
 import { getAllTasksData } from "../lib/tasks";
 import Task from "../components/Task";
@@ -12,11 +12,12 @@ const apiUrl = `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/list-task/`;
 
 export default function TaskPage({ staticfilterdTasks }) {
   const { data: tasks, mutate } = useSWR(apiUrl, fetcher, {
-    initialData: staticfilterdTasks,
+    fallbackData: staticfilterdTasks,
   });
   const filteredTasks = tasks?.sort(
     (a, b) => new Date(b.created_at) - new Date(a.created_at)
   );
+
   useEffect(() => {
     mutate();
   }, []);
@@ -53,6 +54,7 @@ export default function TaskPage({ staticfilterdTasks }) {
     </StateContextProvider>
   );
 }
+
 export async function getStaticProps() {
   const staticfilterdTasks = await getAllTasksData();
 
